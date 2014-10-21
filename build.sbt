@@ -1,4 +1,4 @@
-organization  := "com.example"
+organization  := "com.github.fzakaria"
 
 version       := "0.1"
 
@@ -20,3 +20,5 @@ libraryDependencies ++= {
 }
 
 Revolver.settings
+
+scalariformSettings
