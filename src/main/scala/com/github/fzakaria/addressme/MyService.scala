@@ -1,4 +1,4 @@
-package com.example
+package com.github.fzakaria.addressme
 
 import akka.actor.Actor
 import spray.routing._

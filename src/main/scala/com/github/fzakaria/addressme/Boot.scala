@@ -1,4 +1,4 @@
-package com.example
+package com.github.fzakaria.addressme
 
 import akka.actor.{ActorSystem, Props}
 import akka.io.IO
