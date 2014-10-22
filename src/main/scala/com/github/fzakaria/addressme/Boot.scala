@@ -1,19 +1,18 @@
 package com.github.fzakaria.addressme
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ ActorSystem, Props }
 import akka.io.IO
 import spray.can.Http
 import akka.pattern.ask
 import akka.util.Timeout
 import scala.concurrent.duration._
+import com.github.fzakaria.addressme.api.ApiActor
+import spray.routing.ActorSystemProviderImpl
 
-object Boot extends App {
-
-  // we need an ActorSystem to host our application in
-  implicit val system = ActorSystem("on-spray-can")
+object Boot extends App with ActorSystemProviderImpl {
 
   // create and start our service actor
-  val service = system.actorOf(Props[MyServiceActor], "demo-service")
+  val service = actorSystem.actorOf(Props[ApiActor], "addressme-service")
 
   implicit val timeout = Timeout(5.seconds)
   // start a new HTTP server on port 8080 with our service actor as the handler
