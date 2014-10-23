@@ -1,21 +1,21 @@
-package com.github.fzakaria.addressme.services
+package com.github.fzakaria.addressme.routers
 
 import spray.routing._
 import Directives._
 import spray.http._
 import StatusCodes._
 import spray.httpx.PlayTwirlSupport._
-import com.github.fzakaria.addressme.factories.OAuth2ServiceFactory
+import com.github.fzakaria.addressme.factories.OAuth2RouterFactory
 
-trait LoginService extends Routable {
-  me: OAuth2ServiceFactory =>
+trait LoginRouter extends Routable {
+  me: OAuth2RouterFactory =>
 
   override def route: Route = {
     pathPrefix("login") {
       (pathEnd & get) {
         complete { html.login.render }
       } ~
-        oauth2Service.route
+        oauth2Router.route
     }
 
   }

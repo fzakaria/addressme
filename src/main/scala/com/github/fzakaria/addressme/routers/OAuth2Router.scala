@@ -1,4 +1,4 @@
-package com.github.fzakaria.addressme.services
+package com.github.fzakaria.addressme.routers
 
 import spray.routing.Routable
 import spray.routing._
@@ -8,7 +8,7 @@ import StatusCodes._
 import com.github.fzakaria.addressme.factories.OAuth2ProviderFactory
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait OAuth2Service extends Routable {
+trait OAuth2Router extends Routable {
   me: OAuth2ProviderFactory =>
 
   override def route: Route = {
