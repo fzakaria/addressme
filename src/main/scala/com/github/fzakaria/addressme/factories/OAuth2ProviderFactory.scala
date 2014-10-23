@@ -14,7 +14,7 @@ trait OAuth2ProviderFactoryImpl extends OAuth2ProviderFactory {
 
   override def getProvider(name: String): OAuth2Provider = {
     name match {
-      case "github" => new GithubOAuth2Provider with ActorSystemProviderImpl with ConfigFactoryImpl
+      case "github" => new GithubOAuth2Provider with ActorSystemProviderImpl with ConfigServiceFactoryImpl
       case _ => throw new IllegalArgumentException("No provider is found with that name.")
     }
   }

@@ -6,6 +6,7 @@ import Directives._
 import spray.http._
 import StatusCodes._
 import com.github.fzakaria.addressme.factories.OAuth2ProviderFactory
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait OAuth2Service extends Routable {
   me: OAuth2ProviderFactory =>
@@ -23,8 +24,12 @@ trait OAuth2Service extends Routable {
             complete(BadRequest -> s"We have the following error: $error")
           } ~
             parameter('code, 'state) { (code, state) =>
-              validate(providerService.doesStateMatch(state), "The state doesn't match! Likely CSRF") {
-                complete { provider }
+              validate(providerService.generateState == state, "The state doesn't match! Likely CSRF") {
+                onSuccess(providerService.getToken(code)) { tokenResult =>
+                  onSuccess(providerService.login(tokenResult.access_token)) { oauthUser =>
+                    complete { oauthUser.toString }
+                  }
+                }
               }
             }
 

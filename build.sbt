@@ -18,12 +18,14 @@ libraryDependencies ++= {
     "com.typesafe.akka"   %%  "akka-actor"    % akkaV,
     "com.typesafe.akka"   %%  "akka-testkit"  % akkaV   % "test",
     "org.specs2"          %%  "specs2-core"   % "2.3.11" % "test",
-    "net.ceedubs" 		  %%  "ficus" 		  % "1.1.1"
+    "net.ceedubs" 		  %%  "ficus" 		  % "1.1.1",
+    "com.roundeights"     %% "hasher"         % "1.0.0"
   )
 }
 
 resolvers ++= Seq(
-  "Sonatype OSS Releases"  at "http://oss.sonatype.org/content/repositories/releases/"
+  "Sonatype OSS Releases"  at "http://oss.sonatype.org/content/repositories/releases/",
+  "RoundEights"            at "http://maven.spikemark.net/roundeights"
 )
 
 Revolver.settings
