@@ -5,12 +5,14 @@ import Directives._
 import akka.actor.ActorSystem
 import com.github.fzakaria.addressme.factories.ApiRouterFactory
 import com.github.fzakaria.addressme.factories.ApiRouterFactoryImpl
+import com.github.fzakaria.addressme.factories.StaticRouterFactory
+import com.github.fzakaria.addressme.factories.StaticRouterFactoryImpl
 
 trait ApiActor extends HttpServiceActor {
-  me: ApiRouterFactory =>
-  def receive = runRoute(apiRouter.route)
+  me: ApiRouterFactory with StaticRouterFactory =>
+  def receive = runRoute(staticRouter.route ~ apiRouter.route)
 }
 
-class ApiActorImpl extends HttpServiceActor with ApiRouterFactoryImpl with ApiActor {
+class ApiActorImpl extends HttpServiceActor with StaticRouterFactoryImpl with ApiRouterFactoryImpl with ApiActor {
 
 }

@@ -8,15 +8,16 @@ import spray.client.pipelining._
 import scala.concurrent._
 import spray.routing.ActorSystemProvider
 import scala.concurrent.ExecutionContext.Implicits.global
-import com.github.fzakaria.addressme.authentication.oauth.providers.OAuth2TokenResultProtocol._
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import com.roundeights.hasher.Implicits._
 import spray.httpx.encoding.{ Gzip, Deflate }
 import spray.http.HttpHeaders.Accept
+import spray.http.MediaRanges.`*/*`
 import spray.http.MediaTypes.`application/json`
 import spray.httpx.SprayJsonSupport._
 import spray.httpx.unmarshalling._
+import spray.httpx.unmarshalling.FormDataUnmarshallers
 
 case class OAuth2Config(clientId: String, clientSecret: String, tokenUrl: String, authorizeUrl: String, scopes: Seq[String], callbackUrl: String, key: String)
 
@@ -27,10 +28,26 @@ trait OAuth2Provider extends OAuthProvider {
 
   lazy val oauth2Config: OAuth2Config = config.as[OAuth2Config](KEY_PREFIX)
 
+  def setContentType(mediaType: MediaType)(r: HttpResponse): HttpResponse = {
+    r.withEntity(HttpEntity(ContentType(mediaType), r.entity.data))
+  }
+
+  val SimpleOAuth2TokenResultUnmarshaller =
+    Unmarshaller.delegate[String, OAuth2TokenResult](`*/*`) { string =>
+      val query = Uri.Query(string)
+      val access_token = query.getOrElse("access_token", throw new IllegalStateException("Shoudl have had access_token"))
+      val scope = query.getOrElse("scope", "")
+      val token_type = query.getOrElse("token_type", "bearer")
+      OAuth2TokenResult(access_token, scope, token_type)
+    }
+
+  implicit val unmarshaller = Unmarshaller.oneOf[OAuth2TokenResult](OAuth2TokenResultProtocol.OAuth2TokenFormat, SimpleOAuth2TokenResultUnmarshaller)
+
   def pipelineWithoutMarshal = (
     encode(Gzip)
     ~> addHeader(Accept(`application/json`))
     ~> sendReceive
+    ~> setContentType(MediaTypes.`application/json`)
     ~> decode(Deflate)
   )
 
