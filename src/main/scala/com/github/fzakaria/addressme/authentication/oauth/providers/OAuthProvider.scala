@@ -1,8 +1,17 @@
 package com.github.fzakaria.addressme.authentication.oauth.providers
 import spray.http.Uri
+import com.github.fzakaria.addressme.models.User
+import scala.concurrent.Future
 
-trait OAuthProvider {
+abstract class OAuthUser(login: Option[String], id: Option[String], avatar_url: Option[String], name: Option[String], company: Option[String],
+  email: Option[String])
+
+trait OAuthProvider[+T <: OAuthUser] {
 
   def name: String
+
+  def login(token: String): Future[OAuthUser]
+
+  def find[A <: OAuthUser](socialProfile: A): User
 
 }

@@ -7,6 +7,3 @@ case class OAuth2TokenResult(access_token: String, scope: String, token_type: St
 object OAuth2TokenResultProtocol extends DefaultJsonProtocol {
   implicit val OAuth2TokenFormat = jsonFormat3(OAuth2TokenResult)
 }
-
-abstract class OAuth2User(login: Option[String], id: Option[String], avatar_url: Option[String], name: Option[String], company: Option[String],
-  email: Option[String])

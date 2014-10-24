@@ -3,6 +3,8 @@ package com.github.fzakaria.addressme.authentication.oauth.providers
 import com.github.fzakaria.addressme.authentication.oauth._
 import spray.http.Uri
 import com.github.fzakaria.addressme.factories.ConfigServiceFactory
+import com.github.fzakaria.addressme.models.User
+import com.github.fzakaria.addressme.factories.UserRepositoryFactory
 import spray.routing.ActorSystemProvider
 import scala.concurrent.ExecutionContext.Implicits.global
 import spray.http.HttpHeaders.Accept
@@ -17,19 +19,24 @@ import spray.httpx.SprayJsonSupport._
 
 case class GithubUser(login: Option[String], id: Option[Long], avatar_url: Option[String], `type`: Option[String], name: Option[String], company: Option[String],
   blog: Option[String], location: Option[String], email: Option[String], bio: Option[String], public_repos: Option[Int], public_gists: Option[Int], followers: Option[Int],
-  following: Option[Int], created_at: Option[String], updated_at: Option[String]) extends OAuth2User(login, id.map(_.toString), avatar_url, name, company,
+  following: Option[Int], created_at: Option[String], updated_at: Option[String]) extends OAuthUser(login, id.map(_.toString), avatar_url, name, company,
   email)
 
 object GithubUserProtocol extends DefaultJsonProtocol {
   implicit val GithubUserFormat = jsonFormat16(GithubUser)
 }
 
-trait GithubOAuth2Provider extends OAuth2Provider {
-  me: ConfigServiceFactory with ActorSystemProvider =>
+trait GithubOAuth2Provider extends OAuth2Provider[GithubUser] {
+  me: ConfigServiceFactory with ActorSystemProvider with UserRepositoryFactory =>
   override def name: String = "github"
 
   import GithubUserProtocol._
-  override def login(token: String): Future[OAuth2User] = {
+
+  override def find[GithubUser](socialProfile: GithubUser): User = {
+    throw new NotImplementedError
+  }
+
+  override def login(token: String): Future[OAuthUser] = {
     val loginUri = Uri("https://api.github.com/user").withQuery(("access_token", token))
     val pipeline: (HttpRequest) => Future[GithubUser] = pipelineWithoutMarshal ~> unmarshal[GithubUser]
     pipeline(Get(loginUri))

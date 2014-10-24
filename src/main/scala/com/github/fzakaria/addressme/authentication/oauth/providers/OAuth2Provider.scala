@@ -20,7 +20,7 @@ import spray.httpx.unmarshalling.{ Unmarshaller, FromResponseUnmarshaller }
 
 case class OAuth2Config(clientId: String, clientSecret: String, tokenUrl: String, authorizeUrl: String, scopes: Seq[String], callbackUrl: String, key: String)
 
-trait OAuth2Provider extends OAuthProvider {
+trait OAuth2Provider[+T <: OAuthUser] extends OAuthProvider[T] {
   me: ConfigServiceFactory with ActorSystemProvider =>
 
   private val KEY_PREFIX: String = s"oauth2.$name"
@@ -31,7 +31,7 @@ trait OAuth2Provider extends OAuthProvider {
     r.withEntity(HttpEntity(ContentType(mediaType), r.entity.data))
   }
   val SimpleOAuth2TokenResultUnmarshaller =
-    spray.httpx.unmarshalling.Unmarshaller.delegate[String, OAuth2TokenResult](`*/*`) { string =>
+    Unmarshaller.delegate[String, OAuth2TokenResult](`*/*`) { string =>
       val query = Uri.Query(string)
       val access_token = query.getOrElse("access_token", throw new IllegalStateException("Shoudl have had access_token"))
       val scope = query.getOrElse("scope", "")
@@ -48,8 +48,6 @@ trait OAuth2Provider extends OAuthProvider {
     ~> setContentType(MediaTypes.`application/json`)
     ~> decode(Deflate)
   )
-
-  def login(token: String): Future[OAuth2User]
 
   def getToken(code: String): Future[OAuth2TokenResult] = {
     val accessTokenUri = Uri(oauth2Config.tokenUrl).withQuery(

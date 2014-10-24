@@ -14,21 +14,27 @@ import spray.client.pipelining._
 import scala.concurrent._
 import spray.json.DefaultJsonProtocol
 import spray.httpx.SprayJsonSupport._
+import com.github.fzakaria.addressme.models.User
 
 case class FacebookUser(id: Option[String], name: Option[String], email: Option[String])
-  extends OAuth2User(id = id, name = name, email = email, company = None, login = None, avatar_url = None)
+  extends OAuthUser(id = id, name = name, email = email, company = None, login = None, avatar_url = None)
 
 object FacebookUserProtocol extends DefaultJsonProtocol {
   implicit val FacebookUserFormat = jsonFormat3(FacebookUser)
 }
 
-trait FacebookOAuth2Provider extends OAuth2Provider {
+trait FacebookOAuth2Provider extends OAuth2Provider[FacebookUser] {
   me: ConfigServiceFactory with ActorSystemProvider =>
 
   override def name: String = "facebook"
 
   import FacebookUserProtocol._
-  override def login(token: String): Future[OAuth2User] = {
+
+  override def find[FacebookUser](socialProfile: FacebookUser): User = {
+    throw new NotImplementedError
+  }
+
+  override def login(token: String): Future[OAuthUser] = {
     val loginUri = Uri("https://graph.facebook.com/me").withQuery(("access_token", token))
     val pipeline: (HttpRequest) => Future[FacebookUser] = pipelineWithoutMarshal ~> unmarshal[FacebookUser]
     pipeline(Get(loginUri))

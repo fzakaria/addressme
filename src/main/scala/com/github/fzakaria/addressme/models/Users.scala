@@ -114,6 +114,6 @@ trait UsersComponent {
       passwordInfo
     ) <> (User.tupled, User.unapply)
   }
-
   val users = TableQuery[Users]
+
 }
