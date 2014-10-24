@@ -8,7 +8,9 @@ trait DatabaseEnumeration extends Enumeration {
   me: DriverComponent =>
 
   import driver.simple._
-  import driver.MappedJdbcType
 
-  implicit val enumMapper = MappedJdbcType.base[Value, Int](_.id, this.apply)
+  implicit def databaseEnumerationTypeMapper = MappedColumnType.base[Value, String](
+    enum => enum.toString,
+    string => this.withName(string))
+
 }
