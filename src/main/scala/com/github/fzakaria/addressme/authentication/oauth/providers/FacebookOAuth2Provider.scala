@@ -15,6 +15,7 @@ import scala.concurrent._
 import spray.json.DefaultJsonProtocol
 import spray.httpx.SprayJsonSupport._
 import com.github.fzakaria.addressme.models.User
+import com.github.fzakaria.addressme.factories.UserRepositoryFactory
 
 case class FacebookUser(id: Option[String], name: Option[String], email: Option[String])
   extends OAuthUser(id = id, name = name, email = email, company = None, login = None, avatar_url = None)
@@ -23,15 +24,16 @@ object FacebookUserProtocol extends DefaultJsonProtocol {
   implicit val FacebookUserFormat = jsonFormat3(FacebookUser)
 }
 
-trait FacebookOAuth2Provider extends OAuth2Provider[FacebookUser] {
-  me: ConfigServiceFactory with ActorSystemProvider =>
+trait FacebookOAuth2Provider extends OAuth2Provider {
+  me: ConfigServiceFactory with ActorSystemProvider with UserRepositoryFactory =>
 
+  type SocialUser = FacebookUser
   override def name: String = "facebook"
 
   import FacebookUserProtocol._
 
-  override def find[FacebookUser](socialProfile: FacebookUser): User = {
-    throw new NotImplementedError
+  override def find(socialProfile: FacebookUser): Option[User] = {
+    socialProfile.id.flatMap { userRepo.findByProviderAndUserId(name, _) }
   }
 
   override def login(token: String): Future[OAuthUser] = {

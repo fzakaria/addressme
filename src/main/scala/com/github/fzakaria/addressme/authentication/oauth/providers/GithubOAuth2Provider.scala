@@ -26,14 +26,16 @@ object GithubUserProtocol extends DefaultJsonProtocol {
   implicit val GithubUserFormat = jsonFormat16(GithubUser)
 }
 
-trait GithubOAuth2Provider extends OAuth2Provider[GithubUser] {
+trait GithubOAuth2Provider extends OAuth2Provider {
   me: ConfigServiceFactory with ActorSystemProvider with UserRepositoryFactory =>
+
+  type SocialUser = GithubUser
   override def name: String = "github"
 
   import GithubUserProtocol._
 
-  override def find[GithubUser](socialProfile: GithubUser): User = {
-    throw new NotImplementedError
+  override def find(socialProfile: GithubUser): Option[User] = {
+    socialProfile.login.flatMap { userRepo.findByProviderAndUserId(name, _) }
   }
 
   override def login(token: String): Future[OAuthUser] = {

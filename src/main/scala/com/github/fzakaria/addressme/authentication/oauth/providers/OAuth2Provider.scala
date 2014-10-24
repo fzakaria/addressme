@@ -20,7 +20,7 @@ import spray.httpx.unmarshalling.{ Unmarshaller, FromResponseUnmarshaller }
 
 case class OAuth2Config(clientId: String, clientSecret: String, tokenUrl: String, authorizeUrl: String, scopes: Seq[String], callbackUrl: String, key: String)
 
-trait OAuth2Provider[+T <: OAuthUser] extends OAuthProvider[T] {
+trait OAuth2Provider extends OAuthProvider {
   me: ConfigServiceFactory with ActorSystemProvider =>
 
   private val KEY_PREFIX: String = s"oauth2.$name"

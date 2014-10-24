@@ -6,12 +6,14 @@ import scala.concurrent.Future
 abstract class OAuthUser(login: Option[String], id: Option[String], avatar_url: Option[String], name: Option[String], company: Option[String],
   email: Option[String])
 
-trait OAuthProvider[+T <: OAuthUser] {
+trait OAuthProvider {
+
+  type SocialUser <: OAuthUser
 
   def name: String
 
   def login(token: String): Future[OAuthUser]
 
-  def find[A <: OAuthUser](socialProfile: A): User
+  def find(socialProfile: SocialUser): Option[User]
 
 }

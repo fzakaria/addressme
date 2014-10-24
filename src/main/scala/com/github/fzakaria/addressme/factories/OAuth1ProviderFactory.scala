@@ -7,13 +7,13 @@ import com.github.fzakaria.addressme.authentication.oauth.providers.OAuthUser
 
 trait OAuth1ProviderFactory {
 
-  def getProvider(name: String): OAuth1Provider[OAuthUser]
+  def getProvider(name: String): OAuth1Provider
 
 }
 
 trait OAuth1ProviderFactoryImpl extends OAuth1ProviderFactory {
 
-  override def getProvider(name: String): OAuth1Provider[OAuthUser] = {
+  override def getProvider(name: String): OAuth1Provider = {
     name match {
       case _ => throw new IllegalArgumentException("No provider is found with that name.")
     }
