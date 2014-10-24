@@ -16,8 +16,7 @@ import spray.http.HttpHeaders.Accept
 import spray.http.MediaRanges.`*/*`
 import spray.http.MediaTypes.`application/json`
 import spray.httpx.SprayJsonSupport._
-import spray.httpx.unmarshalling._
-import spray.httpx.unmarshalling.FormDataUnmarshallers
+import spray.httpx.unmarshalling.{ Unmarshaller, FromResponseUnmarshaller }
 
 case class OAuth2Config(clientId: String, clientSecret: String, tokenUrl: String, authorizeUrl: String, scopes: Seq[String], callbackUrl: String, key: String)
 
@@ -31,9 +30,8 @@ trait OAuth2Provider extends OAuthProvider {
   def setContentType(mediaType: MediaType)(r: HttpResponse): HttpResponse = {
     r.withEntity(HttpEntity(ContentType(mediaType), r.entity.data))
   }
-
   val SimpleOAuth2TokenResultUnmarshaller =
-    Unmarshaller.delegate[String, OAuth2TokenResult](`*/*`) { string =>
+    spray.httpx.unmarshalling.Unmarshaller.delegate[String, OAuth2TokenResult](`*/*`) { string =>
       val query = Uri.Query(string)
       val access_token = query.getOrElse("access_token", throw new IllegalStateException("Shoudl have had access_token"))
       val scope = query.getOrElse("scope", "")

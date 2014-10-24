@@ -26,7 +26,9 @@ libraryDependencies ++= {
     "ch.qos.logback"      %   "logback-classic" % "1.1.2",
     "org.slf4j"			  %   "slf4j-api"     % "1.7.7",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
-    "com.typesafe.slick"  %%  "slick"         % "2.1.0"
+    "com.typesafe.slick"  %%  "slick"         % "2.1.0",
+    "com.h2database"      %   "h2"            % "latest.release",
+    "postgresql"		  %   "postgresql"    % "9.1-901.jdbc4"
   )
 }
 

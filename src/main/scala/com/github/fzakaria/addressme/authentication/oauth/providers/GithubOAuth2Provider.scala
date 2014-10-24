@@ -15,9 +15,9 @@ import scala.concurrent._
 import spray.json.DefaultJsonProtocol
 import spray.httpx.SprayJsonSupport._
 
-case class GithubUser(login: Option[String], id: Option[String], avatar_url: Option[String], `type`: Option[String], name: Option[String], company: Option[String],
+case class GithubUser(login: Option[String], id: Option[Long], avatar_url: Option[String], `type`: Option[String], name: Option[String], company: Option[String],
   blog: Option[String], location: Option[String], email: Option[String], bio: Option[String], public_repos: Option[Int], public_gists: Option[Int], followers: Option[Int],
-  following: Option[Int], created_at: Option[String], updated_at: Option[String]) extends OAuth2User(login, id, avatar_url, name, company,
+  following: Option[Int], created_at: Option[String], updated_at: Option[String]) extends OAuth2User(login, id.map(_.toString), avatar_url, name, company,
   email)
 
 object GithubUserProtocol extends DefaultJsonProtocol {
