@@ -20,8 +20,13 @@ libraryDependencies ++= {
     "com.typesafe.akka"   %%  "akka-testkit"  % akkaV   % "test",
     "org.specs2"          %%  "specs2-core"   % "2.3.11" % "test",
     "net.ceedubs" 		  %%  "ficus" 		  % "1.1.1",
-    "com.roundeights"     %% "hasher"         % "1.0.0",
-    "com.github.nscala-time" %% "nscala-time" % "1.4.0"
+    "com.roundeights"     %%  "hasher"        % "1.0.0",
+    "com.github.nscala-time" %% "nscala-time" % "1.4.0",
+    "com.typesafe.slick"  %%  "slick" 		  % "2.1.0",
+    "ch.qos.logback"      %   "logback-classic" % "1.1.2",
+    "org.slf4j"			  %   "slf4j-api"     % "1.7.7",
+    "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+    "com.typesafe.slick"  %%  "slick"         % "2.1.0"
   )
 }
 
