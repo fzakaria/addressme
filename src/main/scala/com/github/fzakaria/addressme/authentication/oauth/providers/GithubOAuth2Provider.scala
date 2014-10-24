@@ -16,6 +16,7 @@ import spray.client.pipelining._
 import scala.concurrent._
 import spray.json.DefaultJsonProtocol
 import spray.httpx.SprayJsonSupport._
+import com.github.fzakaria.addressme.models.AuthenticationMethod._
 
 case class GithubUser(login: Option[String], id: Option[Long], avatar_url: Option[String], `type`: Option[String], name: Option[String], company: Option[String],
   blog: Option[String], location: Option[String], email: Option[String], bio: Option[String], public_repos: Option[Int], public_gists: Option[Int], followers: Option[Int],
@@ -38,7 +39,24 @@ trait GithubOAuth2Provider extends OAuth2Provider {
     socialProfile.login.flatMap { userRepo.findByProviderAndUserId(name, _) }
   }
 
-  override def login(token: String): Future[OAuthUser] = {
+  override def create(socialProfile: GithubUser): User = {
+    val nameSplit = socialProfile.name.map { name =>
+      name.split("\\s+")
+    }
+    val firstName = nameSplit.flatMap { nameSplit =>
+      nameSplit.headOption
+    }
+    val lastName = nameSplit.flatMap { nameSplit =>
+      nameSplit.lastOption
+
+    }
+    val newUser = User(userId = socialProfile.login, email = socialProfile.email,
+      providerId = name, authMethod = OAuth2, firstName = firstName,
+      lastName = lastName)
+    userRepo.create(newUser)
+  }
+
+  override def login(token: String): Future[GithubUser] = {
     val loginUri = Uri("https://api.github.com/user").withQuery(("access_token", token))
     val pipeline: (HttpRequest) => Future[GithubUser] = pipelineWithoutMarshal ~> unmarshal[GithubUser]
     pipeline(Get(loginUri))

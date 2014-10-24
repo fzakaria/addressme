@@ -44,19 +44,19 @@ case class PasswordInfo(hasher: Option[String] = None, password: Option[String] 
 
 case class User(
   id: Option[Long] = None,
-  userId: String,
+  userId: Option[String] = None,
   providerId: String,
-  firstName: String,
-  lastName: String,
-  email: String,
-  avatarUrl: Option[String],
+  firstName: Option[String],
+  lastName: Option[String],
+  email: Option[String] = None,
+  avatarUrl: Option[String] = None,
   authMethod: AuthenticationMethod,
   //OAuth1
-  oAuth1Info: OAuth1Info,
+  oAuth1Info: OAuth1Info = OAuth1Info(),
   //OAuth2
-  oAuth2Info: OAuth2Info,
+  oAuth2Info: OAuth2Info = OAuth2Info(),
   //PasswordInfo
-  passwordInfo: PasswordInfo)
+  passwordInfo: PasswordInfo = PasswordInfo())
 
 trait UsersComponent {
   me: DriverComponent =>
@@ -65,15 +65,15 @@ trait UsersComponent {
   class Users(tag: Tag) extends Table[User](tag, "users") {
     def id = column[Long]("id", O.AutoInc, O.PrimaryKey)
 
-    def userId = column[String]("userId")
+    def userId = column[Option[String]]("userId")
 
     def providerId = column[String]("providerId")
 
-    def firstName = column[String]("firstName")
+    def firstName = column[Option[String]]("firstName")
 
-    def lastName = column[String]("lastName")
+    def lastName = column[Option[String]]("lastName")
 
-    def email = column[String]("email")
+    def email = column[Option[String]]("email")
 
     def avatarUrl = column[Option[String]]("avatarUrl")
 

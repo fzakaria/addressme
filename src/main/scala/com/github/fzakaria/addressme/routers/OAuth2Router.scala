@@ -27,7 +27,8 @@ trait OAuth2Router extends Routable {
               validate(providerService.generateState == state, "The state doesn't match! Likely CSRF") {
                 onSuccess(providerService.getToken(code)) { tokenResult =>
                   onSuccess(providerService.login(tokenResult.access_token)) { oauthUser =>
-                    complete { oauthUser.toString }
+                    val user = providerService.findOrCreate(oauthUser)
+                    complete { user.toString }
                   }
                 }
               }

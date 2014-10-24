@@ -36,7 +36,8 @@ trait OAuth2Provider extends OAuthProvider {
       val access_token = query.getOrElse("access_token", throw new IllegalStateException("Shoudl have had access_token"))
       val scope = query.getOrElse("scope", "")
       val token_type = query.getOrElse("token_type", "bearer")
-      OAuth2TokenResult(access_token, scope, token_type)
+      val expires_in = query.getOrElse("expires_in", Int.MaxValue.toString)
+      OAuth2TokenResult(access_token, scope, token_type, Some(expires_in.toInt))
     }
 
   implicit val unmarshaller = Unmarshaller.oneOf[OAuth2TokenResult](OAuth2TokenResultProtocol.OAuth2TokenFormat, SimpleOAuth2TokenResultUnmarshaller)

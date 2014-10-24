@@ -16,12 +16,13 @@ import spray.json.DefaultJsonProtocol
 import spray.httpx.SprayJsonSupport._
 import com.github.fzakaria.addressme.models.User
 import com.github.fzakaria.addressme.factories.UserRepositoryFactory
+import com.github.fzakaria.addressme.models.AuthenticationMethod._
 
-case class FacebookUser(id: Option[String], name: Option[String], email: Option[String])
+case class FacebookUser(id: Option[String], name: Option[String], email: Option[String], first_name: Option[String], last_name: Option[String])
   extends OAuthUser(id = id, name = name, email = email, company = None, login = None, avatar_url = None)
 
 object FacebookUserProtocol extends DefaultJsonProtocol {
-  implicit val FacebookUserFormat = jsonFormat3(FacebookUser)
+  implicit val FacebookUserFormat = jsonFormat5(FacebookUser)
 }
 
 trait FacebookOAuth2Provider extends OAuth2Provider {
@@ -36,7 +37,14 @@ trait FacebookOAuth2Provider extends OAuth2Provider {
     socialProfile.id.flatMap { userRepo.findByProviderAndUserId(name, _) }
   }
 
-  override def login(token: String): Future[OAuthUser] = {
+  override def create(socialProfile: FacebookUser): User = {
+    val newUser = User(userId = socialProfile.id, email = socialProfile.email,
+      providerId = name, authMethod = OAuth2, firstName = socialProfile.first_name,
+      lastName = socialProfile.last_name)
+    userRepo.create(newUser)
+  }
+
+  override def login(token: String): Future[FacebookUser] = {
     val loginUri = Uri("https://graph.facebook.com/me").withQuery(("access_token", token))
     val pipeline: (HttpRequest) => Future[FacebookUser] = pipelineWithoutMarshal ~> unmarshal[FacebookUser]
     pipeline(Get(loginUri))

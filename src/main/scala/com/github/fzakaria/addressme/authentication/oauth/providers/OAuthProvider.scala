@@ -12,8 +12,14 @@ trait OAuthProvider {
 
   def name: String
 
-  def login(token: String): Future[OAuthUser]
+  def login(token: String): Future[SocialUser]
 
   def find(socialProfile: SocialUser): Option[User]
+
+  def create(socialProfile: SocialUser): User
+
+  def findOrCreate(socialProfile: SocialUser): User = {
+    find(socialProfile) getOrElse create(socialProfile)
+  }
 
 }
