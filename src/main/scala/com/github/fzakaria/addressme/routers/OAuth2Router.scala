@@ -30,7 +30,7 @@ trait OAuth2Router extends Routable {
                   onSuccess(providerService.login(tokenResult.access_token)) { oauthUser =>
                     val user = providerService.findOrCreate(oauthUser)
                     setSession(("userId", user.id.get.toString)) {
-                      complete { user.toString }
+                      redirect("/api/home", spray.http.StatusCodes.TemporaryRedirect)
                     }
                   }
                 }

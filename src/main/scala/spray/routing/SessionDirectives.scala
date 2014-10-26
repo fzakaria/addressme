@@ -34,7 +34,7 @@ trait SessionDirectives {
    * @param baker CookieBaker that can decode the baked cookie
    */
   def optionalBakedCookie[T <: AnyRef](baker: CookieBaker[T]): Directive[Option[T] :: HNil] =
-    bakedCookie(baker).hmap(_.map(shapeless.option)) | provide(None)
+    optionalCookie(baker.cookieName).flatMap(c => provide(Some(baker.decodeFromCookie(c))))
 
   /**
    * Encodes a Baked cookie and sets it in the response header

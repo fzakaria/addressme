@@ -7,6 +7,7 @@ import StatusCodes._
 import spray.httpx.PlayTwirlSupport._
 import com.github.fzakaria.addressme.factories.OAuth2RouterFactory
 import com.typesafe.scalalogging.LazyLogging
+import spray.routing.SessionDirectives._
 
 trait LoginRouter extends Routable with LazyLogging {
   me: OAuth2RouterFactory =>
@@ -17,7 +18,12 @@ trait LoginRouter extends Routable with LazyLogging {
         complete { html.login.render(rs) }
       } ~
         oauth2Router.route(rs)
-    }
+    } ~
+      path("logout" ~ Slash.?) {
+        clearSession {
+          redirect("/api/home", spray.http.StatusCodes.TemporaryRedirect)
+        }
+      }
 
   }
 }

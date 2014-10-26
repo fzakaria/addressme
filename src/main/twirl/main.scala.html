@@ -1,11 +1,42 @@
-@(title: String)(content: Html)
-<!DOCTYPE html>
-<html>
-  <head>
-  	<link rel="icon" type="image/png" href="/static/images/favicon.png" />
-    <title>@title</title>
+@(rs: spray.routing.RequestSession, title: String)(content: Html)
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content=AddressMe is a site to help find you a mailbox aroudn the world!"">
+    <meta name="author" content="Farid Zakaria">
+    <link rel="icon" href="/static/images/favicon.png">
+
+    <title>Sticky Footer Navbar Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/css/sticky-footer-navbar.css" rel="stylesheet">
   </head>
+
   <body>
-    <section class="content">@content</section>
-  </body>
+
+	@navbar(rs)
+
+    <!-- Begin page content -->
+    <div class="container">
+      @content
+    </div>
+
+    <div class="footer">
+      <div class="container">
+        <p class="text-muted">Place sticky footer content here.</p>
+      </div>
+    </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  
+</body>
 </html>

@@ -1,19 +1,36 @@
 @(rs: spray.routing.RequestSession)
 
-@main(title = "Login") {
-    
-  <h1>Login page</h1>
+
+@main(rs = rs, title = "Login") {
+   
+   <link href="/static/css/signin.css" rel="stylesheet">
+
+  <form class="form-signin" role="form">
+    <h2 class="form-signin-heading">Please sign in</h2>
+    <input type="email" class="form-control" placeholder="Email address" required="" autofocus="">
+    <input type="password" class="form-control" placeholder="Password" required="">
+    <label class="checkbox">
+      <input type="checkbox" value="remember-me"> Remember me
+    </label>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+  </form>
+      
   
-  @rs.user.map{ user =>
-  	<p> Welcome @user ! </p>
-  }.getOrElse {
-  	<p> You need to login! </p>
-  }
-    
-  <p>
-  	Select a provider:
-  	<a href="login/oauth2/github"> <img src="/static/images/providers/github.png"/></a>
-  	<a href="login/oauth2/facebook"> <img src="/static/images/providers/facebook.png"/></a>
-  </p>
+  <div class="row">
+  	<div class="col-md-4 col-md-offset-4">
+  		<a href="login/oauth2/google" class="btn btn-primary btn-block disabled" role="button">
+  			<span>Login with <strong>Google+</strong></span>
+    	</a>
+    	<a href="login/oauth2/facebook" class="btn btn-primary btn-block" role="button">
+  			<span>Login with <strong>Facebook</strong></span>
+    	</a>
+    	<a href="login/oauth2/twitter" class="btn btn-primary btn-block disabled" role="button">
+  			<span>Login with <strong>Twitter</strong></span>
+    	</a>
+    	<a href="login/oauth2/github" class="btn btn-primary btn-block" role="button">
+  			<span>Login with <strong>Github</strong></span>
+    	</a>
+  	</div>
+  </div>
     
 }
