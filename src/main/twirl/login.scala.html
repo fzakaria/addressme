@@ -1,6 +1,14 @@
+@(rs: spray.routing.RequestSession)
+
 @main(title = "Login") {
     
   <h1>Login page</h1>
+  
+  @rs.user.map{ user =>
+  	<p> Welcome @user ! </p>
+  }.getOrElse {
+  	<p> You need to login! </p>
+  }
     
   <p>
   	Select a provider:

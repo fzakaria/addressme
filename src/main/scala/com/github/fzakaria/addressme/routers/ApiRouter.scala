@@ -8,9 +8,9 @@ import Directives._
 trait ApiRouter extends Routable {
   me: LoginRouterFactory =>
 
-  override def route: Route = {
+  override def route(rs: RequestSession): Route = {
     pathPrefix("api") {
-      loginRouter.route
+      loginRouter.route(rs)
     }
   }
 

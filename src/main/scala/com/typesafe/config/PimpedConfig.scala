@@ -22,6 +22,13 @@ class PimpedConfig(config: Config) {
     }
   }
 
+  def cookieName: String = {
+    config.as[String]("addressme.cookieName")
+  }
+  def applicationSecret: String = {
+    config.as[String]("addressme.secret")
+  }
+
   def dbUrl(name: String = DEFAULT_NAME): String = {
     val databaseUrl = config.as[Option[String]](s"db.$name.url").getOrElse {
       throw new IllegalArgumentException(s"Slick error : database url not defined in application.conf for db.$name.url key")

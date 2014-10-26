@@ -11,12 +11,12 @@ import com.typesafe.scalalogging.LazyLogging
 trait LoginRouter extends Routable with LazyLogging {
   me: OAuth2RouterFactory =>
 
-  override def route: Route = {
+  override def route(rs: RequestSession): Route = {
     pathPrefix("login") {
       (pathEnd & get) {
-        complete { html.login.render }
+        complete { html.login.render(rs) }
       } ~
-        oauth2Router.route
+        oauth2Router.route(rs)
     }
 
   }

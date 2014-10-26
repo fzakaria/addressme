@@ -1,5 +1,5 @@
 package spray.routing
 
 trait Routable {
-  def route: Route
+  def route(rs: RequestSession): Route
 }

@@ -7,11 +7,12 @@ import spray.http._
 import StatusCodes._
 import com.github.fzakaria.addressme.factories.OAuth2ProviderFactory
 import scala.concurrent.ExecutionContext.Implicits.global
+import spray.routing.SessionDirectives._
 
 trait OAuth2Router extends Routable {
   me: OAuth2ProviderFactory =>
 
-  override def route: Route = {
+  override def route(rs: RequestSession): Route = {
     //login/:provider
     pathPrefix("oauth2" / Segment) { provider =>
       val providerService = getProvider(provider)
@@ -28,7 +29,9 @@ trait OAuth2Router extends Routable {
                 onSuccess(providerService.getToken(code)) { tokenResult =>
                   onSuccess(providerService.login(tokenResult.access_token)) { oauthUser =>
                     val user = providerService.findOrCreate(oauthUser)
-                    complete { user.toString }
+                    setSession(("userId", user.id.get.toString)) {
+                      complete { user.toString }
+                    }
                   }
                 }
               }

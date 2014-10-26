@@ -1,7 +1,7 @@
 package com.github.fzakaria.addressme.authentication.oauth.providers
 
 import spray.http.Uri
-import com.github.fzakaria.addressme.factories.ConfigServiceFactory
+import com.github.fzakaria.addressme.factories.{ ConfigServiceFactory, CryptoProviderFactory }
 import collection.JavaConversions._
 import spray.http._
 import spray.client.pipelining._
@@ -10,7 +10,6 @@ import spray.routing.ActorSystemProvider
 import scala.concurrent.ExecutionContext.Implicits.global
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
-import com.roundeights.hasher.Implicits._
 import spray.httpx.encoding.{ Gzip, Deflate }
 import spray.http.HttpHeaders.Accept
 import spray.http.MediaRanges.`*/*`
@@ -21,7 +20,7 @@ import spray.httpx.unmarshalling.{ Unmarshaller, FromResponseUnmarshaller }
 case class OAuth2Config(clientId: String, clientSecret: String, tokenUrl: String, authorizeUrl: String, scopes: Seq[String], callbackUrl: String, key: String)
 
 trait OAuth2Provider extends OAuthProvider {
-  me: ConfigServiceFactory with ActorSystemProvider =>
+  me: ConfigServiceFactory with ActorSystemProvider with CryptoProviderFactory =>
 
   private val KEY_PREFIX: String = s"oauth2.$name"
 
@@ -72,7 +71,7 @@ trait OAuth2Provider extends OAuthProvider {
    * You can save this state in the cookie but don't forget to make it HttpOnly
    */
   def generateState: String = {
-    oauth2Config.authorizeUrl.toString.hmac(oauth2Config.key).sha1
+    cryptoProvider.sign(oauth2Config.authorizeUrl)
   }
 
 }

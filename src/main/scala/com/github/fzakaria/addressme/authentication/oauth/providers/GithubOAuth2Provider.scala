@@ -2,7 +2,7 @@ package com.github.fzakaria.addressme.authentication.oauth.providers
 
 import com.github.fzakaria.addressme.authentication.oauth._
 import spray.http.Uri
-import com.github.fzakaria.addressme.factories.ConfigServiceFactory
+import com.github.fzakaria.addressme.factories.{ ConfigServiceFactory, CryptoProviderFactory }
 import com.github.fzakaria.addressme.models.User
 import com.github.fzakaria.addressme.factories.UserRepositoryFactory
 import spray.routing.ActorSystemProvider
@@ -28,7 +28,7 @@ object GithubUserProtocol extends DefaultJsonProtocol {
 }
 
 trait GithubOAuth2Provider extends OAuth2Provider {
-  me: ConfigServiceFactory with ActorSystemProvider with UserRepositoryFactory =>
+  me: ConfigServiceFactory with ActorSystemProvider with UserRepositoryFactory with CryptoProviderFactory =>
 
   type SocialUser = GithubUser
   override def name: String = "github"

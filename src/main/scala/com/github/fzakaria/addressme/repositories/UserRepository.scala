@@ -7,6 +7,8 @@ import com.github.fzakaria.addressme.factories.DatabaseServiceFactory
 
 trait UserRepository {
 
+  def findById(id: Long): Option[User]
+
   def create(newUser: User): User
 
   def findByProviderAndUserId(provider: String, userId: String): Option[User]
@@ -21,6 +23,12 @@ trait SlickUserRepository extends UserRepository with UsersComponent {
   me: DatabaseServiceFactory with DriverComponent =>
 
   import driver.simple._
+
+  override def findById(id: Long): Option[User] = {
+    database withSession { implicit session =>
+      users.filter(_.id === id).firstOption
+    }
+  }
 
   override def create(newUser: User): User = {
     database withSession { implicit session =>

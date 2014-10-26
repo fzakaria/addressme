@@ -2,7 +2,7 @@ package com.github.fzakaria.addressme.authentication.oauth.providers
 
 import com.github.fzakaria.addressme.authentication.oauth._
 import spray.http.Uri
-import com.github.fzakaria.addressme.factories.ConfigServiceFactory
+import com.github.fzakaria.addressme.factories.{ ConfigServiceFactory, CryptoProviderFactory }
 import spray.routing.ActorSystemProvider
 import scala.concurrent.ExecutionContext.Implicits.global
 import spray.http.HttpHeaders.Accept
@@ -26,7 +26,7 @@ object FacebookUserProtocol extends DefaultJsonProtocol {
 }
 
 trait FacebookOAuth2Provider extends OAuth2Provider {
-  me: ConfigServiceFactory with ActorSystemProvider with UserRepositoryFactory =>
+  me: ConfigServiceFactory with ActorSystemProvider with UserRepositoryFactory with CryptoProviderFactory =>
 
   type SocialUser = FacebookUser
   override def name: String = "facebook"
