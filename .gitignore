@@ -11,3 +11,4 @@ test-output/
 .project
 .settings/
 logs/
+src/main/resources/public/bower_components/
