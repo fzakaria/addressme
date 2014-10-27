@@ -17,7 +17,7 @@
   
   <!-- Off these ones as they are annoying, and anyway we manage configuration ourself -->
 
-  <root level="DEBUG">
+  <root level="INFO">
     <appender-ref ref="STDOUT" />
     <appender-ref ref="FILE" />
   </root>

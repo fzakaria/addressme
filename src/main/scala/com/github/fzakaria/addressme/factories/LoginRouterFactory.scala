@@ -7,5 +7,5 @@ trait LoginRouterFactory {
 }
 
 trait LoginRouterFactoryImpl extends LoginRouterFactory {
-  override def loginRouter: LoginRouter = new LoginRouter() with OAuth2RouterFactoryImpl
+  override def loginRouter: LoginRouter = new LoginRouter() with OAuth2RouterFactoryImpl with UserPasswordProviderFactoryImpl
 }

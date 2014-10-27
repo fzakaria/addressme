@@ -17,6 +17,7 @@ import com.github.fzakaria.addressme.factories.{ UserRepositoryFactory, UserRepo
 import spray.util.LoggingContext
 import spray.http.StatusCodes._
 import spray.httpx.PlayTwirlSupport._
+import spray.routing.SessionDirectives._
 
 trait ApiActor extends HttpServiceActor with ActorLogging {
   me: ApiRouterFactory with StaticRouterFactory with UserRepositoryFactory =>
@@ -29,7 +30,9 @@ trait ApiActor extends HttpServiceActor with ActorLogging {
       //log the request/response when Akkas log level is debug or lower
       logRequestResponse("[API]") {
         authenticate(SessionLoginAuth(findUser)) { potentialUser =>
-          apiRouter.route(RequestSession(potentialUser))
+          getAndClearFlash { flash =>
+            apiRouter.route(RequestSession(potentialUser, flash))
+          }
         }
       }
   )

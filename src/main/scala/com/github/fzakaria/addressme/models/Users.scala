@@ -33,15 +33,6 @@ case class OAuth1Info(token: Option[String] = None, secret: Option[String] = Non
 case class OAuth2Info(accessToken: Option[String] = None, tokenType: Option[String] = None,
   expiresIn: Option[Int] = None, refreshToken: Option[String] = None)
 
-/**
- * The password details
- *
- * @param hasher the id of the hasher used to hash this password
- * @param password the hashed password
- * @param salt the optional salt used when hashing
- */
-case class PasswordInfo(hasher: Option[String] = None, password: Option[String] = None, salt: Option[String] = None)
-
 case class User(
   id: Option[Long] = None,
   userId: Option[String] = None,
@@ -56,7 +47,7 @@ case class User(
   //OAuth2
   oAuth2Info: OAuth2Info = OAuth2Info(),
   //PasswordInfo
-  passwordInfo: PasswordInfo = PasswordInfo())
+  password: Option[String] = None)
 
 trait UsersComponent {
   me: DriverComponent =>
@@ -94,11 +85,7 @@ trait UsersComponent {
     def oAuth2Info = (accessToken, tokenType, expiresIn, refreshToken) <> (OAuth2Info.tupled, OAuth2Info.unapply)
 
     // password login
-    def hasher = column[Option[String]]("hasher")
     def password = column[Option[String]]("password")
-    def salt = column[Option[String]]("salt")
-
-    def passwordInfo = (hasher, password, salt) <> (PasswordInfo.tupled, PasswordInfo.unapply)
 
     def * = (
       id.?,
@@ -111,7 +98,7 @@ trait UsersComponent {
       authMethod,
       oAuth1Info,
       oAuth2Info,
-      passwordInfo
+      password
     ) <> (User.tupled, User.unapply)
   }
   val users = TableQuery[Users]

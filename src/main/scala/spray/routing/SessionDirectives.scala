@@ -21,6 +21,13 @@ trait SessionDirectives {
   import RouteDirectives._
 
   /**
+   * Extracts either the baked cookie or the empty cookie object
+   */
+  def bakedCookieOrDefault[T <: AnyRef](baker: CookieBaker[T]): Directive[T :: HNil] = {
+    optionalBakedCookie(baker).map(optionalCookie => optionalCookie getOrElse baker.emptyCookie)
+  }
+
+  /**
    * Extracts and passes a baked cookie object from the cookie
    * @param baker CookieBaker that can decode the cookie
    */
@@ -54,6 +61,8 @@ trait SessionDirectives {
    * Same as bakedCookie, using Session CookieBaker
    */
   def session: Directive[Session :: HNil] = bakedCookie(Session)
+
+  def flashOrDefault: Directive[Flash :: HNil] = bakedCookieOrDefault(Flash)
 
   /**
    * Extracts a Session value with the given name. Rejects MissingSessionRejection
@@ -95,10 +104,20 @@ trait SessionDirectives {
    */
   def setSession(mapData: (String, String)*): Directive0 = setSession(Session(Map(mapData: _*)))
 
+  def addFlash(flashValues: (String, String)): Directive0 = flashOrDefault.flatMap {
+    case c => setBakedCookie(Flash, c + flashValues)
+  }
+
   /**
    * Same as clearBakedCookie, using Session as the CookieBaker
    */
   def clearSession: Directive0 = clearBakedCookie(Session)
+
+  def clearFlash: Directive0 = clearBakedCookie(Flash)
+
+  def getAndClearFlash: Directive[Flash :: HNil] = {
+    (flashOrDefault & clearFlash)
+  }
 }
 
 object SessionDirectives extends SessionDirectives

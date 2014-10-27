@@ -19,10 +19,19 @@
   <body>
 
 	@navbar(rs)
-
     <!-- Begin page content -->
     <div class="container">
+      @for((key,value) <- rs.flash.data){
+      	<div class="alert alert-@key alert-dismissible" role="alert">
+      	<button type="button" class="close" data-dismiss="alert">
+      		<span aria-hidden="true">&times;</span>
+      		<span class="sr-only">Close</span>
+      	</button>
+      	@value</div>
+      } 
+     <div class="row">
       @content
+     </div>
     </div>
 
     <div class="footer">
